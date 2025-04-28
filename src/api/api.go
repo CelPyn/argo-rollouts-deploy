@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var colour = "#32cd7a"
+var colour = "#3eb2d6"
 var host string
 
 type M map[string]interface{}
