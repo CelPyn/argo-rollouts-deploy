@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: recreate
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: recreate
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: recreate
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - image: 211125550721.dkr.ecr.eu-west-1.amazonaws.com/rollouts-demo:green
+          imagePullPolicy: Always
+          name: recreate
+          ports:
+            - containerPort: 8080
+              name: http
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            httpGet:
+              port: http
+              path: /health/liveness
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            httpGet:
+              port: http
+              path: /health/readiness
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+              ephemeral-storage: 2Gi
+            limits:
+              cpu: 1000m
+              ephemeral-storage: 2Gi
