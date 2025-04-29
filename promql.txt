@@ -1,0 +1,2 @@
+# Requests/minute by path
+sum by(path) (rate(req_count_by_path{service="rolling", path=~"/|/json"}[1m]) * 60)
