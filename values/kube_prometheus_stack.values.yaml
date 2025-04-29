@@ -1,0 +1,5 @@
+alertmanager:
+  enabled: false
+
+node-exporter:
+  enabled: false
