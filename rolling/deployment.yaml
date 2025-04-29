@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: default
-  name: recreate
+  name: rolling
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: recreate
+      app.kubernetes.io/name: rolling
   replicas: 2
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: recreate
+        app.kubernetes.io/name: rolling
     spec:
       automountServiceAccountToken: false
       containers:
         - image: 211125550721.dkr.ecr.eu-west-1.amazonaws.com/rollouts-demo:blue
           imagePullPolicy: Always
-          name: recreate
+          name: rolling
           ports:
             - containerPort: 8080
               name: http
