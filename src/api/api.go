@@ -101,6 +101,7 @@ func ColourJSON(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bytes, _ := json.Marshal(M{"error": colour})
 
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write(bytes)
 
