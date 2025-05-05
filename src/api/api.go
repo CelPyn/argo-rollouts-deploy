@@ -87,10 +87,11 @@ func ColourHTML(next http.HandlerFunc) http.HandlerFunc {
 			Host:   host,
 		}
 		t, _ := template.New("colour").Parse(templateString)
+		w.WriteHeader(http.StatusInternalServerError)
 		_ = t.ExecuteTemplate(w, "colour", model)
 		w.Header().Set("Content-Type", "text/html")
 
-		statusCodeContext := StatusCodeContext(http.StatusOK)
+		statusCodeContext := StatusCodeContext(http.StatusInternalServerError)
 		r = r.WithContext(withStatusCodeCtx(r.Context(), &statusCodeContext))
 
 		next.ServeHTTP(w, r)
