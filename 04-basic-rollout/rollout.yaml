@@ -1,37 +1,45 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
-  namespace: default
-  name: rolling
+  name: basic-rollout
 spec:
+  replicas: 5
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - setWeight: 40
+        - pause: {duration: 10}
+        - setWeight: 60
+        - pause: {duration: 10}
+        - setWeight: 80
+        - pause: {duration: 10}
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: rolling
-  replicas: 2
-  strategy:
-    type: RollingUpdate
+      app.kubernetes.io/name: basic-rollout
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: rolling
+        app.kubernetes.io/name: basic-rollout
     spec:
-      automountServiceAccountToken: false
       containers:
         - image: 211125550721.dkr.ecr.eu-west-1.amazonaws.com/rollouts-demo:blue
           imagePullPolicy: Always
-          name: rolling
+          name: basic-rollout
           ports:
             - containerPort: 8080
               name: http
           livenessProbe:
-#            initialDelaySeconds: 30
+            #            initialDelaySeconds: 30
             failureThreshold: 3
             periodSeconds: 5
             httpGet:
               port: http
               path: /health/liveness
           readinessProbe:
-#            initialDelaySeconds: 30
+            #            initialDelaySeconds: 30
             failureThreshold: 3
             periodSeconds: 5
             httpGet:
@@ -40,8 +48,8 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 500Mi
+              memory: 100Mi
               ephemeral-storage: 2Gi
             limits:
-              cpu: 1000m
+              cpu: 200m
               ephemeral-storage: 2Gi

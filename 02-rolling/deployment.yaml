@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: rolling
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rolling
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rolling
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - image: 211125550721.dkr.ecr.eu-west-1.amazonaws.com/rollouts-demo:blue
+          imagePullPolicy: Always
+          name: rolling
+          ports:
+            - containerPort: 8080
+              name: http
+          livenessProbe:
+#            initialDelaySeconds: 30
+            failureThreshold: 3
+            periodSeconds: 5
+            httpGet:
+              port: http
+              path: /health/liveness
+          readinessProbe:
+#            initialDelaySeconds: 30
+            failureThreshold: 3
+            periodSeconds: 5
+            httpGet:
+              port: http
+              path: /health/readiness
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+              ephemeral-storage: 2Gi
+            limits:
+              cpu: 200m
+              ephemeral-storage: 2Gi
