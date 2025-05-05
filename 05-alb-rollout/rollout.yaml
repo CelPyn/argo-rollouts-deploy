@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: alb-rollout
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      canaryService: alb-rollout-canary
+      stableService: alb-rollout-stable
+      trafficRouting:
+        alb:
+          ingress: alb-rollout
+          servicePort: 80
+          stickinessConfig:
+            # In a prod env you'd configure this to make sure that your clients keep talking to the correct service
+            # Otherwise they might swap between TargetGroups which could introduce buggy behavior
+            enabled: false
+            durationSeconds: 30
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - setWeight: 40
+        - pause: {duration: 10}
+        - setWeight: 60
+        - pause: {duration: 10}
+        - setWeight: 80
+        - pause: {duration: 10}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: alb-rollout
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: alb-rollout
+    spec:
+      containers:
+        - image: 211125550721.dkr.ecr.eu-west-1.amazonaws.com/rollouts-demo:green
+          imagePullPolicy: Always
+          name: alb-rollout
+          ports:
+            - containerPort: 8080
+              name: http
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            httpGet:
+              port: http
+              path: /health/liveness
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 5
+            httpGet:
+              port: http
+              path: /health/readiness
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+              ephemeral-storage: 2Gi
+            limits:
+              cpu: 200m
+              ephemeral-storage: 2Gi

@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: recreate
+  name: alb-rollout
   annotations:
     alb.ingress.kubernetes.io/load-balancer-name: haxx-lb
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:211125550721:certificate/d09d91b1-1d05-4c22-9614-c1aefacfff09
@@ -12,13 +12,13 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: "/health/liveness"
 spec:
   rules:
-    - host: recreate.haxx.sandbox-2024.axxes.cloud
+    - host: alb-rollout.haxx.sandbox-2024.axxes.cloud
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: recreate
+                name: alb-rollout-stable
                 port:
-                  number: 80
+                  name: use-annotation
