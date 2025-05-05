@@ -65,6 +65,7 @@ func Health(next http.HandlerFunc) http.HandlerFunc {
 
 func ColourHTML(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
 		templateString := `
 			<!doctype html>
 			<html lang="en">
@@ -87,7 +88,6 @@ func ColourHTML(next http.HandlerFunc) http.HandlerFunc {
 			Host:   host,
 		}
 		t, _ := template.New("colour").Parse(templateString)
-		w.WriteHeader(http.StatusInternalServerError)
 		_ = t.ExecuteTemplate(w, "colour", model)
 		w.Header().Set("Content-Type", "text/html")
 
