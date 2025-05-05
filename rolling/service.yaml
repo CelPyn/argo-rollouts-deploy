@@ -10,6 +10,6 @@ spec:
       name: http
       targetPort: http
       protocol: TCP
-  type: NodePort
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: rolling

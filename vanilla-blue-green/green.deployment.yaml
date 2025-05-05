@@ -2,36 +2,38 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: default
-  name: rolling
+  name: vanilla-blue-green-green
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: rolling
+      app.kubernetes.io/name: vanilla-blue-green
+      env: green
   replicas: 2
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: rolling
+        app.kubernetes.io/name: vanilla-blue-green
+        env: green
     spec:
       automountServiceAccountToken: false
       containers:
-        - image: 211125550721.dkr.ecr.eu-west-1.amazonaws.com/rollouts-demo:blue
+        - image: 211125550721.dkr.ecr.eu-west-1.amazonaws.com/rollouts-demo:green
           imagePullPolicy: Always
-          name: rolling
+          name: vanilla-blue-green
           ports:
             - containerPort: 8080
               name: http
           livenessProbe:
-#            initialDelaySeconds: 30
+            #            initialDelaySeconds: 30
             failureThreshold: 3
             periodSeconds: 5
             httpGet:
               port: http
               path: /health/liveness
           readinessProbe:
-#            initialDelaySeconds: 30
+            #            initialDelaySeconds: 30
             failureThreshold: 3
             periodSeconds: 5
             httpGet:
