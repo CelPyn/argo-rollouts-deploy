@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var colour = "#3eb2d6"
+var colour = "#f20d1a"
 var host string
 
 type M map[string]interface{}
@@ -99,12 +99,12 @@ func ColourHTML(next http.HandlerFunc) http.HandlerFunc {
 
 func ColourJSON(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		bytes, _ := json.Marshal(M{"colour": colour})
+		bytes, _ := json.Marshal(M{"error": colour})
 
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write(bytes)
 
-		statusCodeContext := StatusCodeContext(http.StatusOK)
+		statusCodeContext := StatusCodeContext(http.StatusInternalServerError)
 		r = r.WithContext(withStatusCodeCtx(r.Context(), &statusCodeContext))
 
 		next.ServeHTTP(w, r)
