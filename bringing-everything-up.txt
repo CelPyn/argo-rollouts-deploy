@@ -1,0 +1,2 @@
+Scale deployments for system stuff to 1
+Scale stateful set for prometheus to 1

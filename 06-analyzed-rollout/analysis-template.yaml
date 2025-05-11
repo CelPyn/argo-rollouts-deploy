@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: no-errors
+spec:
+  args:
+    - name: service-name
+  metrics:
+    - name: error-rate
+      successCondition: result[0] == 0
+      provider:
+        prometheus:
+          address: "http://kube-prometheus-stack-prometheus.default:9090"
+          query: |
+            sum by (service, code) (rate(err_count_by_path{service="analyzed-rollout", path=~"/json"}[1m]) * 60) or on() vector(0)

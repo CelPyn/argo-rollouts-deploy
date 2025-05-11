@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: basic-rollout
+  name: analyzed-rollout
   labels:
-    name: basic-rollout
+    name: analyzed-rollout
 spec:
   ports:
     - port: 80
@@ -11,4 +11,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: basic-rollout
+    app.kubernetes.io/name: analyzed-rollout
